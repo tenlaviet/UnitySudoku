@@ -5,16 +5,17 @@ using UnityEngine;
 
 public static class Data
 {
-    public static readonly Dictionary<SudokuCellState, Color> cellBackgroundColor = new Dictionary<SudokuCellState, Color>()
+    public static readonly Dictionary<SudokuCellBackgroundState, Color> cellBackgroundColor = new Dictionary<SudokuCellBackgroundState, Color>()
     {
-         {SudokuCellState.Normal, new Color32(255,255,255,255)},
-         {SudokuCellState.Selected, new Color32(100,180,255,255)},
-         {SudokuCellState.Related, new Color32(180,200,255,255)},
-         {SudokuCellState.Warning, new Color32(255,150,150,255)},
+         {SudokuCellBackgroundState.Normal, new Color32(255,255,255,255)},
+         {SudokuCellBackgroundState.Selected, new Color32(100,180,255,255)},
+         {SudokuCellBackgroundState.Related, new Color32(180,200,255,255)},
+         {SudokuCellBackgroundState.Warning, new Color32(255,150,150,255)},
     };
-    public static readonly Dictionary<bool, Color> cellTextFontColor = new Dictionary<bool, Color>()
+    public static readonly Dictionary<SudokuCellTextState, Color> cellTextFontColor = new Dictionary<SudokuCellTextState, Color>()
     {
-        {true, new Color32(0,0,0,255)},
-        {false, new Color32(150,0,0,255)}
+        {SudokuCellTextState.Default, new Color32(0,0,0,255)},
+        {SudokuCellTextState.Valid, new Color32(0,35,255,255)},
+        {SudokuCellTextState.Invalid, new Color32(150,0,0,255)},
     };
 }

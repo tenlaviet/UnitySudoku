@@ -22,7 +22,6 @@ public class NumberButton : MonoBehaviour
 
     public void OnClick()
     {
-        Debug.Log(value);
-        //SudokuBoard.Instance.PlaceNumber(value);
+        SudokuBoard.Instance.PlaceNumber(value);
     }
 }

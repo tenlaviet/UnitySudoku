@@ -2,12 +2,18 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-public enum SudokuCellState
+public enum SudokuCellBackgroundState
 {
     Normal = 0,
-    Related,
-    Warning,
-    Selected,
+    Related = 1,
+    Warning = 2,
+    Selected = 3,
+}
+public enum SudokuCellTextState
+{
+    Default,
+    Valid,
+    Invalid
 }
 
 [Serializable]
@@ -15,30 +21,29 @@ public class CellData
 {
     public int i;
     public int j;
-    public int _value;
+    public int value;
     public bool isValueValid;
     public bool isEditable;
-    public SudokuCellState _state;
-    public bool test;
-
+    public SudokuCellBackgroundState backgroundState;
+    public SudokuCellTextState textState;
 }
 public class SudokuCell : MonoBehaviour
 {
     public TextMeshProUGUI textComponent;
     public Button button;
-    public Color32 _backgroundColor;
-    public Color32 _textColor;
     public CellData data;
     public void SetPosition(int i, int j)
     {
         this.data.i = i;
         this.data.j = j;
     }
-    public void SetValue(int value)
+    public void SetValue(int value, bool isValueValid, SudokuCellTextState textState)
     {
         
-        this.data._value = value;
-        this.data.isValueValid = true;
+        this.data.value = value;
+        this.data.isValueValid = isValueValid;
+        this.data.textState = textState;
+        this.textComponent.color = Data.cellTextFontColor[this.data.textState];
         if ( 0<value && value <=9)
         {
             textComponent.text = value.ToString();            
@@ -47,18 +52,17 @@ public class SudokuCell : MonoBehaviour
         {
             textComponent.text = "";
         }
-
     }
     
-    public void SetCellState(SudokuCellState state)
+    public void SetBackgroundState(SudokuCellBackgroundState backgroundState)
     {
-        this.data._state = state;
-        this.button.image.color = Data.cellBackgroundColor[this.data._state];
+        this.data.backgroundState = backgroundState;
+        this.button.image.color = Data.cellBackgroundColor[this.data.backgroundState];//background change
     }
+
     public void EmptyCell()
     {
-        
-        this.data._value = 0;
+        this.data.value = 0;
         textComponent.text = "";
     }
 
