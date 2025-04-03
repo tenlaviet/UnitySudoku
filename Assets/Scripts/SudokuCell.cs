@@ -37,6 +37,11 @@ public class SudokuCell : MonoBehaviour
         this.data.i = i;
         this.data.j = j;
     }
+
+    public int GetValue()
+    {
+        return data.value;
+    }
     public void SetValue(int value, bool isValueValid, SudokuCellTextState textState)
     {
         
