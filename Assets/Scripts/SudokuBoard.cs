@@ -270,19 +270,11 @@ public class SudokuBoard : MonoBehaviour
         {
             for (int g = 0; g < 9; g++)
             {
-                // if (SudokuCellArray[k, g].GetValue() == currentSelectedCell.GetValue())
-                // {
-                //     Debug.Log("coordinate:" + k+"x"+g );
-                //     list.Add(SudokuCellArray[k, g]);
-                //
-                // }
-
                 if (SudokuCellArray[k, g].GetValue() == currentSelectedCell.GetValue()
                     && SudokuCellArray[k, g].data.isValueValid
                     && k != i
                     && g != j)
                 {
-                    Debug.Log("coordinate:" + i+"x"+j );
                     if (!list.Contains(SudokuCellArray[k, g]))
                     {
                         list.Add(SudokuCellArray[k, g]);
@@ -351,13 +343,26 @@ public class SudokuBoard : MonoBehaviour
             }
         }
     }
-    public void SelectCell(SudokuCell cell)
+
+    public void Highlight()
     {
-        currentSelectedCell = cell;
+        foreach (SudokuCell _cell in SudokuCellArray)
+        {
+            _cell.SetBackgroundState(SudokuCellBackgroundState.Normal);
+        }
+        
         HighlightRelated();
         HighlightWarning();
         HighlightSelectedCell();
     }
+    
+    public void SelectCell(SudokuCell cell)
+    {
+        currentSelectedCell = cell;
+        Highlight();
+    }
+    
+    
     public void PlaceNumber(int value)
     {
         if (currentSelectedCell.data.isEditable == false)
@@ -370,20 +375,31 @@ public class SudokuBoard : MonoBehaviour
         bool isValid = false;
         if (isPlacedNumberValid(value))
         {
+            if (InvalidSudokuCellList.Contains(currentSelectedCell))
+            {
+                InvalidSudokuCellList.Remove(currentSelectedCell);
+            }
             isValid = true;
             state = SudokuCellTextState.Valid;
-            currentSelectedCell.SetValue(value, isValid, state);
             Debug.Log("valid");
+            
         }
         else
         {
+            if (!InvalidSudokuCellList.Contains(currentSelectedCell))
+            {
+                InvalidSudokuCellList.Add(currentSelectedCell);
+            }
             isValid = false;
             state = SudokuCellTextState.Invalid;
-            InvalidSudokuCellList.Add(currentSelectedCell);
             Debug.Log("invalid");
+
         }
+        
         currentSelectedCell.SetValue(value, isValid, state);
-        HighlightWarning();
+        Highlight();
+        CheckWinCondition();
+
 
     }
 
@@ -398,6 +414,27 @@ public class SudokuBoard : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public bool CheckWinCondition()
+    {
+        int count = 0;
+        foreach (SudokuCell cell in SudokuCellArray)
+        {
+            if (cell.data.value != 0 && cell.data.isValueValid == true)
+            {
+                count++;
+            }
+        }
+
+        if (count == 81)
+        {
+            Debug.Log("u won");
+            return true;
+        }
+
+        return false;
+
     }
 
     public void Undo()
