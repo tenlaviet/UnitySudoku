@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
     //timer
     public TextMeshProUGUI timerText;
     private float elapsedTime;
+    //
+    public int maxLives = 3;
+    public int currentLives;
     private void Awake()
     {
         if (Instance == null)
@@ -22,6 +25,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        currentLives = maxLives;
         Application.targetFrameRate = 75;
     }
 

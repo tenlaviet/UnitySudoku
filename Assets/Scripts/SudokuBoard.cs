@@ -264,8 +264,6 @@ public class SudokuBoard : MonoBehaviour
         {
             return;
         }
-        Debug.Log("currentvalue:" + currentSelectedCell.GetValue());
-
         for (int k = 0; k < 9; k++)
         {
             for (int g = 0; g < 9; g++)
@@ -363,6 +361,41 @@ public class SudokuBoard : MonoBehaviour
     }
     
     
+    
+
+    public bool isPlacedNumberValid(int value)
+    {
+        if (Solutions != null && Solutions.Count > 0)
+        {
+            if (Solutions[0][currentSelectedCell.data.i,currentSelectedCell.data.j] == value)
+            {
+                Debug.Log("solution value: " + Solutions[0][currentSelectedCell.data.i,currentSelectedCell.data.j] + "input value: "+ value);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool CheckWinCondition()
+    {
+        int count = 0;
+        foreach (SudokuCell cell in SudokuCellArray)
+        {
+            if (cell.data.value != 0 && cell.data.isValueValid == true)
+            {
+                count++;
+            }
+        }
+
+        if (count == 81)
+        {
+            Debug.Log("u won");
+            return true;
+        }
+
+        return false;
+
+    }
     public void PlaceNumber(int value)
     {
         if (currentSelectedCell.data.isEditable == false)
@@ -402,47 +435,17 @@ public class SudokuBoard : MonoBehaviour
 
 
     }
-
-    public bool isPlacedNumberValid(int value)
-    {
-        if (Solutions != null && Solutions.Count > 0)
-        {
-            if (Solutions[0][currentSelectedCell.data.i,currentSelectedCell.data.j] == value)
-            {
-                Debug.Log("solution value: " + Solutions[0][currentSelectedCell.data.i,currentSelectedCell.data.j] + "input value: "+ value);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public bool CheckWinCondition()
-    {
-        int count = 0;
-        foreach (SudokuCell cell in SudokuCellArray)
-        {
-            if (cell.data.value != 0 && cell.data.isValueValid == true)
-            {
-                count++;
-            }
-        }
-
-        if (count == 81)
-        {
-            Debug.Log("u won");
-            return true;
-        }
-
-        return false;
-
-    }
-
     public void Undo()
     {
         
     }
 
     public void Erase()
+    {
+        
+    }
+
+    public void Pencil()
     {
         
     }
