@@ -24,6 +24,7 @@ public class CellData
     public int value;
     public bool isValueValid;
     public bool isEditable;
+    public bool isSelected;
     public SudokuCellBackgroundState backgroundState;
     public SudokuCellTextState textState;
 }
@@ -48,27 +49,51 @@ public class SudokuCell : MonoBehaviour
         this.data.value = value;
         this.data.isValueValid = isValueValid;
         this.data.textState = textState;
-        this.textComponent.color = Data.cellTextFontColor[this.data.textState];
-        if ( 0<value && value <=9)
-        {
-            textComponent.text = value.ToString();            
-        }
-        else
-        {
-            textComponent.text = "";
-        }
+        UpdateCell();
     }
     
     public void SetBackgroundState(SudokuCellBackgroundState backgroundState)
     {
         this.data.backgroundState = backgroundState;
-        this.button.image.color = Data.cellBackgroundColor[this.data.backgroundState];//background change
+        UpdateCell();
     }
 
-    public void EmptyCell()
+    public void SetCellDefault()
     {
+        this.data.isValueValid = true;
+        this.data.isEditable = false;
+        this.data.backgroundState = 0;
+        this.data.textState = 0;
+        this.data.value = 0;
+        UpdateCell();
+
+    }
+
+    public void EraseCell()
+    {
+        this.data.isValueValid = true;
+        this.data.textState = 0;
         this.data.value = 0;
         textComponent.text = "";
+        UpdateCell();
+    }
+
+    public void UpdateCell()
+    {
+        this.textComponent.color = Data.cellTextFontColor[this.data.textState];
+        this.button.image.color = Data.cellBackgroundColor[this.data.backgroundState];//background change
+        if (this.data.isSelected == true)
+        {
+            this.button.image.color = Data.cellBackgroundColor[SudokuCellBackgroundState.Selected];//background change
+        }
+        if ( 0< this.data.value && this.data.value <=9)
+        {
+            textComponent.text = this.data.value.ToString();            
+        }
+        else
+        {
+            textComponent.text = "";
+        }
     }
 
     public void OnClick()

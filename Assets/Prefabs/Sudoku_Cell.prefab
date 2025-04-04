@@ -93,8 +93,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -173,7 +173,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 40, y: 40}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1114403726205197941
 CanvasRenderer:
@@ -306,7 +306,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 40, y: 40}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4053007384199546848
 CanvasRenderer:
@@ -330,17 +330,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textComponent: {fileID: 3945571910906097399}
   button: {fileID: 3322184203135111662}
-  _backgroundColor:
-    serializedVersion: 2
-    rgba: 0
-  _textColor:
-    serializedVersion: 2
-    rgba: 0
   data:
     i: 0
     j: 0
-    _value: 0
+    value: 0
     isValueValid: 0
     isEditable: 0
-    _state: 0
-    test: 0
+    backgroundState: 0
+    textState: 0
