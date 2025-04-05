@@ -11,8 +11,6 @@ public class SudokuBoard : MonoBehaviour
     public SudokuCell sudokuCell;//Cell prefab
     private SudokuCell[,] SudokuCellArray;
     private SudokuCell currentSelectedCell;
-    public List<SudokuCell> HighlightedSudokuCellList;
-    public List<SudokuCell> InvalidSudokuCellList;
     private List<int[,]> Solutions;
     public Vector2 startPosition;
     public float offset;
@@ -31,8 +29,6 @@ public class SudokuBoard : MonoBehaviour
     private void Start()
     {
         SudokuCellArray = new SudokuCell[9, 9];
-        HighlightedSudokuCellList = new List<SudokuCell>();
-        InvalidSudokuCellList = new List<SudokuCell>();
         Solutions = new List<int[,]>();
         BoardHistory = new List<CellData[]>();
         CreateSudokuBoard();
@@ -86,7 +82,7 @@ public class SudokuBoard : MonoBehaviour
                     value = Random.Range(1, 10);
                 } while (!UnUsedInBox(rowStart, colStart, value));
 
-                SudokuCellArray[rowStart + i, colStart + j].SetValue(value, true);
+                SudokuCellArray[rowStart + i, colStart + j].SetCellValue(value, true);
             }
         }
     }
@@ -151,11 +147,11 @@ public class SudokuBoard : MonoBehaviour
         }
         for (int num = 1; num <= 9; num++) {
             if (CheckIfSafe(i, j, num)) {
-                SudokuCellArray[i, j].SetValue(num,true);
+                SudokuCellArray[i, j].SetCellValue(num,true);
                 if (FillRemaining(i, j + 1)) {
                     return true;
                 }
-                SudokuCellArray[i, j].SetValue(0,true);
+                SudokuCellArray[i, j].SetCellValue(0,true);
             }
         }
         return false;
@@ -170,15 +166,13 @@ public class SudokuBoard : MonoBehaviour
             if (SudokuCellArray[i, j].GetValue() != 0)
             {
                 SudokuCellArray[i, j].data.isEditable = true;
-                SudokuCellArray[i, j].SetValue(0, true);
+                SudokuCellArray[i, j].SetCellValue(0, true);
                 a--;
             }
         }
     }
     private void ResetBoard()
     {
-        HighlightedSudokuCellList = new List<SudokuCell>();
-        InvalidSudokuCellList = new List<SudokuCell>();
         Solutions = new List<int[,]>();
         foreach (SudokuCell cell in SudokuCellArray)
         {
@@ -298,23 +292,22 @@ public class SudokuBoard : MonoBehaviour
 
     private void HighlightRelated()
     {
-        foreach (SudokuCell cell in HighlightedSudokuCellList)
-        {
-            if (cell.data.backgroundState == SudokuCellBackgroundState.Warning)
-            {
-                continue;
-            }
-            cell.SetBackgroundState(SudokuCellBackgroundState.Normal);
-        }
-        HighlightedSudokuCellList.Clear();
-        
+        List<SudokuCell> highlightedSudokuCellList = new List<SudokuCell>();
+        // foreach (SudokuCell cell in HighlightedSudokuCellList)
+        // {
+        //     if (cell.data.backgroundState == SudokuCellBackgroundState.Warning)
+        //     {
+        //         continue;
+        //     }
+        //     cell.SetBackgroundState(SudokuCellBackgroundState.Normal);
+        // }
         int i = currentSelectedCell.data.i;
         int j = currentSelectedCell.data.j;
-        GetRelatedRow(i,j, HighlightedSudokuCellList);
-        GetRelatedColumn(i,j, HighlightedSudokuCellList);
-        GetRelatedBox(i,j, HighlightedSudokuCellList);
-        GetRelatedNumber(i,j, HighlightedSudokuCellList);
-        foreach (SudokuCell cell in HighlightedSudokuCellList)
+        GetRelatedRow(i,j, highlightedSudokuCellList);
+        GetRelatedColumn(i,j, highlightedSudokuCellList);
+        GetRelatedBox(i,j, highlightedSudokuCellList);
+        GetRelatedNumber(i,j, highlightedSudokuCellList);
+        foreach (SudokuCell cell in highlightedSudokuCellList)
         {
                 cell.SetBackgroundState(SudokuCellBackgroundState.Related);
         }
@@ -322,12 +315,16 @@ public class SudokuBoard : MonoBehaviour
 
     private void HighlightWarning()
     {
-        foreach (SudokuCell cell in InvalidSudokuCellList)
+        foreach (SudokuCell cell in SudokuCellArray)
         {
+            if (cell.data.isValueValid)
+            {
+                continue;
+            }
+            List<SudokuCell> relatedList = new List<SudokuCell>();
             List<SudokuCell> cellsWithSameValue = new List<SudokuCell>();
             int i = cell.data.i;
             int j = cell.data.j;
-            List<SudokuCell> relatedList = new List<SudokuCell>();
             GetRelatedRow(i,j, relatedList);
             GetRelatedColumn(i,j, relatedList);
             GetRelatedBox(i,j, relatedList);
@@ -417,38 +414,23 @@ public class SudokuBoard : MonoBehaviour
             return;
         }
 
-        SudokuCellTextState state = SudokuCellTextState.Default;
         bool isValid = false;
         if (isPlacedNumberValid(value))
         {
-            if (InvalidSudokuCellList.Contains(currentSelectedCell))
-            {
-                InvalidSudokuCellList.Remove(currentSelectedCell);
-            }
             isValid = true;
-            state = SudokuCellTextState.Valid;
-            
         }
         else
         {
-            if (!InvalidSudokuCellList.Contains(currentSelectedCell))
-            {
-                InvalidSudokuCellList.Add(currentSelectedCell);
-            }
             isValid = false;
-            state = SudokuCellTextState.Invalid;
-
         }
         
-        currentSelectedCell.SetValue(value, isValid);
+        currentSelectedCell.SetCellValue(value, isValid);
         UpdateBoardState();
         UpdateBoardDataHistory();
         CheckWinCondition();
-
-
     }
 
-    public void UpdateBoardDataHistory()
+    private void UpdateBoardDataHistory()
     {
         int position = 0;
         CellData[] boardData = new CellData[81];
@@ -458,29 +440,19 @@ public class SudokuBoard : MonoBehaviour
             position++;
         }
         BoardHistory.Insert(0,boardData);
-        Debug.Log("history count:"+ BoardHistory.Count);
-        string dattb = "";
-
-        foreach (CellData data in BoardHistory[0])
-        {
-            dattb +="" +data.value;
-        
-        }
-        Debug.Log("new board values:" + dattb);
-
     }
     public void Undo()
     {
          Debug.Log("undo");
          if (BoardHistory.Count <= 1)
          {
-             Debug.Log("history count:"+ BoardHistory.Count);
+             Debug.Log("cant undo anymore");
              return;
          }
          int position = 0;
          foreach (SudokuCell currentCell in SudokuCellArray)
          {
-            currentCell.data = BoardHistory[0][position];
+            currentCell.data = BoardHistory[1][position];
             currentCell.UpdateCell();
             position++;
          }
@@ -489,11 +461,12 @@ public class SudokuBoard : MonoBehaviour
 
     public void Erase()
     {
-        if (InvalidSudokuCellList.Contains(currentSelectedCell))
+        if (!currentSelectedCell.data.isEditable)
         {
-            InvalidSudokuCellList.Remove(currentSelectedCell);
+            return;
         }
-        currentSelectedCell.EraseCell();
+        currentSelectedCell.EraseCellValue();
+        UpdateBoardState();
         UpdateBoardDataHistory();
     }
 

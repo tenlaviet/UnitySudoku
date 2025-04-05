@@ -43,7 +43,7 @@ public class SudokuCell : MonoBehaviour
     {
         return data.value;
     }
-    public void SetValue(int value, bool isValueValid)
+    public void SetCellValue(int value, bool isValueValid)
     {
         
         this.data.value = value;
@@ -68,7 +68,7 @@ public class SudokuCell : MonoBehaviour
 
     }
 
-    public void EraseCell()
+    public void EraseCellValue()
     {
         this.data.isValueValid = true;
         this.data.textState = 0;
@@ -79,6 +79,17 @@ public class SudokuCell : MonoBehaviour
 
     public void UpdateCell()
     {
+        if (data.isEditable)
+        {
+            if (data.isValueValid)
+            {
+                this.data.textState = SudokuCellTextState.Valid;
+            }
+            else
+            {
+                this.data.textState = SudokuCellTextState.Invalid;
+            }
+        }
         this.textComponent.color = Data.cellTextFontColor[this.data.textState];
         this.button.image.color = Data.cellBackgroundColor[this.data.backgroundState];//background change
         if (this.data.isSelected == true)
