@@ -17,7 +17,7 @@ public enum SudokuCellTextState
 }
 
 [Serializable]
-public class CellData
+public struct CellData
 {
     public int i;
     public int j;
@@ -43,12 +43,11 @@ public class SudokuCell : MonoBehaviour
     {
         return data.value;
     }
-    public void SetValue(int value, bool isValueValid, SudokuCellTextState textState)
+    public void SetValue(int value, bool isValueValid)
     {
         
         this.data.value = value;
         this.data.isValueValid = isValueValid;
-        this.data.textState = textState;
         UpdateCell();
     }
     

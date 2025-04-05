@@ -86,7 +86,7 @@ public class SudokuBoard : MonoBehaviour
                     value = Random.Range(1, 10);
                 } while (!UnUsedInBox(rowStart, colStart, value));
 
-                SudokuCellArray[rowStart + i, colStart + j].SetValue(value, true, SudokuCellTextState.Default);
+                SudokuCellArray[rowStart + i, colStart + j].SetValue(value, true);
             }
         }
     }
@@ -151,11 +151,11 @@ public class SudokuBoard : MonoBehaviour
         }
         for (int num = 1; num <= 9; num++) {
             if (CheckIfSafe(i, j, num)) {
-                SudokuCellArray[i, j].SetValue(num,true, SudokuCellTextState.Default);
+                SudokuCellArray[i, j].SetValue(num,true);
                 if (FillRemaining(i, j + 1)) {
                     return true;
                 }
-                SudokuCellArray[i, j].SetValue(0,true,  SudokuCellTextState.Default);
+                SudokuCellArray[i, j].SetValue(0,true);
             }
         }
         return false;
@@ -170,7 +170,7 @@ public class SudokuBoard : MonoBehaviour
             if (SudokuCellArray[i, j].GetValue() != 0)
             {
                 SudokuCellArray[i, j].data.isEditable = true;
-                SudokuCellArray[i, j].SetValue(0, true, SudokuCellTextState.Default);
+                SudokuCellArray[i, j].SetValue(0, true);
                 a--;
             }
         }
@@ -440,7 +440,7 @@ public class SudokuBoard : MonoBehaviour
 
         }
         
-        currentSelectedCell.SetValue(value, isValid, state);
+        currentSelectedCell.SetValue(value, isValid);
         UpdateBoardState();
         UpdateBoardDataHistory();
         CheckWinCondition();
@@ -471,20 +471,20 @@ public class SudokuBoard : MonoBehaviour
     }
     public void Undo()
     {
-        // Debug.Log("undo");
-        // if (BoardHistory.Count <= 1)
-        // {
-        //     Debug.Log("history count:"+ BoardHistory.Count);
-        //     return;
-        // }
-        // int position = 0;
-        // foreach (SudokuCell currentCell in SudokuCellArray)
-        // {
-        //     currentCell.data = BoardHistory[0][position];
-        //     currentCell.UpdateCell();
-        //     position++;
-        // }
-        // BoardHistory.RemoveAt(0);
+         Debug.Log("undo");
+         if (BoardHistory.Count <= 1)
+         {
+             Debug.Log("history count:"+ BoardHistory.Count);
+             return;
+         }
+         int position = 0;
+         foreach (SudokuCell currentCell in SudokuCellArray)
+         {
+            currentCell.data = BoardHistory[0][position];
+            currentCell.UpdateCell();
+            position++;
+         }
+         BoardHistory.RemoveAt(0);
     }
 
     public void Erase()
