@@ -22,6 +22,10 @@ public class NumberButton : MonoBehaviour
 
     public void OnClick()
     {
+        if (GameManager.Instance.isPaused)
+        {
+            return;
+        }
         SudokuBoard.Instance.PlaceNumber(value);
     }
 }

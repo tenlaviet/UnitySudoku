@@ -368,8 +368,7 @@ public class SudokuBoard : MonoBehaviour
 
         if (count == 81)
         {
-            Debug.Log("u won");
-            return true;
+            GameManager.Instance.ShowGameResult(true);
         }
 
         return false;
@@ -379,6 +378,10 @@ public class SudokuBoard : MonoBehaviour
     //player actions
     public void SelectCell(SudokuCell cell)
     {
+        if (GameManager.Instance.isPaused)
+        {
+            return;
+        }
         if (currentSelectedCell !=null)
         {
             currentSelectedCell.data.isSelected = false;
@@ -390,6 +393,10 @@ public class SudokuBoard : MonoBehaviour
 
     public void PlaceNumber(int value)
     {
+        if (currentSelectedCell == null)
+        {
+            return;
+        }
         if (currentSelectedCell.data.isEditable == false)
         {
             return;
@@ -403,7 +410,7 @@ public class SudokuBoard : MonoBehaviour
         else
         {
             isValid = false;
-            GameManager.Instance.LoseOneLife();
+            GameManager.Instance.IncrementMistakeCount();
         }
         
         currentSelectedCell.SetCellValue(value, isValid);
@@ -425,23 +432,35 @@ public class SudokuBoard : MonoBehaviour
     }
     public void Undo()
     {
-         Debug.Log("undo");
-         if (BoardHistory.Count <= 1)
-         {
+        if (GameManager.Instance.isPaused)
+        {
+            return;
+        }
+        Debug.Log("undo");
+        if (BoardHistory.Count <= 1)
+        {
              Debug.Log("cant undo anymore");
              return;
-         }
-         int position = 0;
-         foreach (SudokuCell currentCell in SudokuCellArray)
-         {
+        }
+        int position = 0;
+        foreach (SudokuCell currentCell in SudokuCellArray)
+        {
             currentCell.data = BoardHistory[1][position];
             currentCell.UpdateCell();
             position++;
-         }
-         BoardHistory.RemoveAt(0);
+        }
+        BoardHistory.RemoveAt(0);
     }
     public void Erase()
     {
+        if (currentSelectedCell == null)
+        {
+            return;
+        }
+        if (GameManager.Instance.isPaused)
+        {
+            return;
+        }
         if (!currentSelectedCell.data.isEditable)
         {
             return;
@@ -452,7 +471,18 @@ public class SudokuBoard : MonoBehaviour
     }
     public void Pencil()
     {
-        
+        if (GameManager.Instance.isPaused)
+        {
+            return;
+        }
+    }
+
+    public void ToggleBoardActive(bool value)
+    {
+        foreach (var cell in SudokuCellArray)
+        {
+            cell.gameObject.SetActive(!value);
+        }
     }
     //player actions
 
