@@ -61,6 +61,7 @@ public class SudokuCell : MonoBehaviour
     {
         this.data.isValueValid = true;
         this.data.isEditable = false;
+        this.data.isSelected = false;
         this.data.backgroundState = 0;
         this.data.textState = 0;
         this.data.value = 0;

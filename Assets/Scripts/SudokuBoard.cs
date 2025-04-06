@@ -7,17 +7,16 @@ using Random = UnityEngine.Random;
 public class SudokuBoard : MonoBehaviour
 {
     public static SudokuBoard Instance { get; private set; }
-    
+    // Board generation
     public SudokuCell sudokuCell;//Cell prefab
     private SudokuCell[,] SudokuCellArray;
-    private SudokuCell currentSelectedCell;
-    private List<int[,]> Solutions;
     public Vector2 startPosition;
     public float offset;
-    
-    //undo related properties
+    //current game data
+    private SudokuCell currentSelectedCell;
+    private List<int[,]> Solutions;
     public List<CellData[]> BoardHistory;
-    
+    //
     private void Awake()
     {
         if (Instance == null)
@@ -71,6 +70,7 @@ public class SudokuBoard : MonoBehaviour
         }
     }
 
+    // puzzle generation// 
     private void FillBox(int rowStart, int colStart)
     {
         int value = 0;
@@ -86,7 +86,6 @@ public class SudokuBoard : MonoBehaviour
             }
         }
     }
-    
     private void FillDiagonal() {
         // Fill each 3x3 subgrid diagonally
         for (int i = 0; i < 9; i = i + 3)
@@ -104,8 +103,6 @@ public class SudokuBoard : MonoBehaviour
         }
         return true;
     }
-    // Check if it's safe to put num in row i
-    // Ensure num is not already used in the row
     private bool UnUsedInRow(int i, int num) {
         for (int j = 0; j < 9; j++) {
             if (SudokuCellArray[i, j].GetValue() == num) {
@@ -114,9 +111,6 @@ public class SudokuBoard : MonoBehaviour
         }
         return true;
     }
-
-    // Check if it's safe to put num in column j
-    // Ensure num is not already used in the column
     private bool UnUsedInCol(int j, int num) {
         for (int i = 0; i < 9; i++) {
             if (SudokuCellArray[i, j].GetValue() == num) {
@@ -125,16 +119,9 @@ public class SudokuBoard : MonoBehaviour
         }
         return true;
     }
-
-
-    // Check if it's safe to put num in the cell (i, j)
-    // Ensure num is not used in row, column, or box
     private bool CheckIfSafe(int i, int j, int num) {
         return (UnUsedInRow(i, num) && UnUsedInCol(j, num) && UnUsedInBox(i - i % 3, j - j % 3, num));
     }
-    
-    // Fill remaining blocks in the grid
-    // Recursively fill the remaining cells with valid numbers
     private bool FillRemaining(int i, int j) {
         if (i == 9) {
             return true;
@@ -156,9 +143,6 @@ public class SudokuBoard : MonoBehaviour
         }
         return false;
     }
-    
-    // Remove K digits randomly from the grid
-    // This will create a Sudoku puzzle by removing digits
     private void RemoveRandom(int a) {
         while (a > 0) {
             int i = Random.Range(0,9);
@@ -171,35 +155,38 @@ public class SudokuBoard : MonoBehaviour
             }
         }
     }
+    public void GenerateSudoku(int a)
+         {
+             int[,] originalSolution = new int[9, 9];
+     
+     
+             ResetBoard();
+             FillDiagonal();
+             FillRemaining(0, 0);
+             for (int i = 0; i < 9; i++)
+             {
+                 for (int j = 0; j < 9; j++)
+                 {
+                     originalSolution[i, j] = SudokuCellArray[i, j].GetValue();
+                 }
+             }
+             Solutions.Insert(0,originalSolution);
+             RemoveRandom(a);
+             UpdateBoardDataHistory();
+         }
     private void ResetBoard()
     {
         Solutions = new List<int[,]>();
+        BoardHistory = new List<CellData[]>();
+        currentSelectedCell = null;
         foreach (SudokuCell cell in SudokuCellArray)
         {
             cell.SetCellDefault();
         }
     }
-    //Generate a Sudoku grid with (a) amount of empty cells
-    public void GenerateSudoku(int a)
-    {
-        int[,] originalSolution = new int[9, 9];
-
-
-        ResetBoard();
-        FillDiagonal();
-        FillRemaining(0, 0);
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                originalSolution[i, j] = SudokuCellArray[i, j].GetValue();
-            }
-        }
-        Solutions.Insert(0,originalSolution);
-        RemoveRandom(a);
-        UpdateBoardDataHistory();
-    }
-
+    //puzzle generation
+    //
+    //highlight cells
     private void GetRelatedRow(int i, int j, List<SudokuCell> list)
     {
         if (list == null)
@@ -215,7 +202,6 @@ public class SudokuBoard : MonoBehaviour
             }
         }
     }
-    
     private void GetRelatedColumn(int i, int j, List<SudokuCell> list)
     {
         if (list == null)
@@ -255,7 +241,6 @@ public class SudokuBoard : MonoBehaviour
             }
         }
     }
-
     private void GetRelatedNumber(int i, int j, List<SudokuCell> list)
     {
         if (list == null)
@@ -284,12 +269,10 @@ public class SudokuBoard : MonoBehaviour
             }
         }
     }
-
     private void HighlightSelectedCell()
     {
         currentSelectedCell.SetBackgroundState(SudokuCellBackgroundState.Selected);
     }
-
     private void HighlightRelated()
     {
         List<SudokuCell> highlightedSudokuCellList = new List<SudokuCell>();
@@ -312,7 +295,6 @@ public class SudokuBoard : MonoBehaviour
                 cell.SetBackgroundState(SudokuCellBackgroundState.Related);
         }
     }
-
     private void HighlightWarning()
     {
         foreach (SudokuCell cell in SudokuCellArray)
@@ -346,7 +328,6 @@ public class SudokuBoard : MonoBehaviour
             }
         }
     }
-
     public void UpdateBoardState()
     {
         foreach (SudokuCell _cell in SudokuCellArray)
@@ -360,22 +341,10 @@ public class SudokuBoard : MonoBehaviour
         
         
     }
-    
-    public void SelectCell(SudokuCell cell)
-    {
-        if (currentSelectedCell !=null)
-        {
-            currentSelectedCell.data.isSelected = false;
-        }
-        currentSelectedCell = cell;
-        currentSelectedCell.data.isSelected = true;
-        UpdateBoardState();
-    }
-    
-    
-    
-
-    public bool isPlacedNumberValid(int value)
+    //highlight cells
+    //
+    //check win condition/ player input
+    public bool IsPlacedNumberValid(int value)
     {
         if (Solutions != null && Solutions.Count > 0)
         {
@@ -386,7 +355,6 @@ public class SudokuBoard : MonoBehaviour
         }
         return false;
     }
-
     public bool CheckWinCondition()
     {
         int count = 0;
@@ -407,6 +375,19 @@ public class SudokuBoard : MonoBehaviour
         return false;
 
     }
+    //
+    //player actions
+    public void SelectCell(SudokuCell cell)
+    {
+        if (currentSelectedCell !=null)
+        {
+            currentSelectedCell.data.isSelected = false;
+        }
+        currentSelectedCell = cell;
+        currentSelectedCell.data.isSelected = true;
+        UpdateBoardState();
+    }
+
     public void PlaceNumber(int value)
     {
         if (currentSelectedCell.data.isEditable == false)
@@ -415,13 +396,14 @@ public class SudokuBoard : MonoBehaviour
         }
 
         bool isValid = false;
-        if (isPlacedNumberValid(value))
+        if (IsPlacedNumberValid(value))
         {
             isValid = true;
         }
         else
         {
             isValid = false;
+            GameManager.Instance.LoseOneLife();
         }
         
         currentSelectedCell.SetCellValue(value, isValid);
@@ -458,7 +440,6 @@ public class SudokuBoard : MonoBehaviour
          }
          BoardHistory.RemoveAt(0);
     }
-
     public void Erase()
     {
         if (!currentSelectedCell.data.isEditable)
@@ -469,9 +450,10 @@ public class SudokuBoard : MonoBehaviour
         UpdateBoardState();
         UpdateBoardDataHistory();
     }
-
     public void Pencil()
     {
         
     }
+    //player actions
+
 }

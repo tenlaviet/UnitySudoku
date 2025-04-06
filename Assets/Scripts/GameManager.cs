@@ -14,8 +14,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI timerText;
     private float elapsedTime;
     //
-    public int maxLives = 3;
-    public int currentLives;
+    private int maxLives = 3;
+    private int currentLives;
     private void Awake()
     {
         if (Instance == null)
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
         UpdateTimer();
     }
 
-
+    
     
     private void UpdateTimer()
     {
@@ -45,6 +45,16 @@ public class GameManager : MonoBehaviour
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
+    public void LoseOneLife()
+    {
+        if (currentLives >0)
+        {
+            currentLives--;
+            return;
+        }
+        Debug.Log("game over");
+        
+    }
     public void NewGame()
     {
         SudokuBoard.Instance.GenerateSudoku(Random.Range(25,40));
