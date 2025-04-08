@@ -2,19 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-public enum SudokuCellBackgroundState
-{
-    Normal = 0,
-    Related = 1,
-    Warning = 2,
-    Selected = 3,
-}
-public enum SudokuCellTextState
-{
-    Default,
-    Valid,
-    Invalid
-}
+
 
 [Serializable]
 public struct CellData
@@ -22,9 +10,6 @@ public struct CellData
     public int i;
     public int j;
     public int value;
-    public bool isValueValid;
-    public bool isEditable;
-    public bool isSelected;
     public SudokuCellBackgroundState backgroundState;
     public SudokuCellTextState textState;
 }
@@ -32,6 +17,9 @@ public class SudokuCell : MonoBehaviour
 {
     public TextMeshProUGUI textComponent;
     public Button button;
+    public bool isValueValid;
+    public bool isEditable;
+    public bool isSelected;
     public CellData data;
     public void SetPosition(int i, int j)
     {
@@ -43,11 +31,12 @@ public class SudokuCell : MonoBehaviour
     {
         return data.value;
     }
-    public void SetCellValue(int value, bool isValueValid)
+    public void SetCellValue(int value, bool isValueValid, bool isEditable)
     {
         
         this.data.value = value;
-        this.data.isValueValid = isValueValid;
+        this.isEditable = isEditable;
+        this.isValueValid = isValueValid;
         UpdateCell();
     }
     
@@ -59,9 +48,9 @@ public class SudokuCell : MonoBehaviour
 
     public void SetCellDefault()
     {
-        this.data.isValueValid = true;
-        this.data.isEditable = false;
-        this.data.isSelected = false;
+        this.isValueValid = true;
+        this.isEditable = false;
+        this.isSelected = false;
         this.data.backgroundState = 0;
         this.data.textState = 0;
         this.data.value = 0;
@@ -71,7 +60,7 @@ public class SudokuCell : MonoBehaviour
 
     public void EraseCellValue()
     {
-        this.data.isValueValid = true;
+        this.isValueValid = true;
         this.data.textState = 0;
         this.data.value = 0;
         textComponent.text = "";
@@ -80,9 +69,9 @@ public class SudokuCell : MonoBehaviour
 
     public void UpdateCell()
     {
-        if (data.isEditable)
+        if (isEditable)
         {
-            if (data.isValueValid)
+            if (isValueValid)
             {
                 this.data.textState = SudokuCellTextState.Valid;
             }
@@ -93,7 +82,7 @@ public class SudokuCell : MonoBehaviour
         }
         this.textComponent.color = Data.cellTextFontColor[this.data.textState];
         this.button.image.color = Data.cellBackgroundColor[this.data.backgroundState];//background change
-        if (this.data.isSelected == true)
+        if (this.isSelected == true)
         {
             this.button.image.color = Data.cellBackgroundColor[SudokuCellBackgroundState.Selected];//background change
         }
