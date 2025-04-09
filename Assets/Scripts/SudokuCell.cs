@@ -31,17 +31,18 @@ public class SudokuCell : MonoBehaviour
     {
         return data.value;
     }
-    public void SetCellValue(int value, bool isValueValid, bool isEditable)
+    public void SetCellValue(int value, bool isEditable)
     {
         
         this.data.value = value;
         this.isEditable = isEditable;
-        this.isValueValid = isValueValid;
         UpdateCell();
     }
     
-    public void SetBackgroundState(SudokuCellBackgroundState backgroundState)
+    public void SetCellState(SudokuCellBackgroundState backgroundState, SudokuCellTextState textState)
     {
+
+        this.data.textState = textState;
         this.data.backgroundState = backgroundState;
         UpdateCell();
     }
@@ -69,23 +70,12 @@ public class SudokuCell : MonoBehaviour
 
     public void UpdateCell()
     {
-        if (isEditable)
-        {
-            if (isValueValid)
-            {
-                this.data.textState = SudokuCellTextState.Valid;
-            }
-            else
-            {
-                this.data.textState = SudokuCellTextState.Invalid;
-            }
-        }
         this.textComponent.color = Data.cellTextFontColor[this.data.textState];
         this.button.image.color = Data.cellBackgroundColor[this.data.backgroundState];//background change
-        if (this.isSelected == true)
-        {
-            this.button.image.color = Data.cellBackgroundColor[SudokuCellBackgroundState.Selected];//background change
-        }
+        // if (this.isSelected == true)
+        // {
+        //     this.button.image.color = Data.cellBackgroundColor[SudokuCellBackgroundState.Selected];//background change
+        // }
         if ( 0< this.data.value && this.data.value <=9)
         {
             textComponent.text = this.data.value.ToString();            

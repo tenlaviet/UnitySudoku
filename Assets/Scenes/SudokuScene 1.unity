@@ -333,7 +333,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1219496584}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: OpenLevelSelectMenu
+        m_MethodName: NewGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -671,6 +671,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8483924560554714945, guid: c0a7271a872871e46974aabf603d84ce, type: 3}
   m_PrefabInstance: {fileID: 8483924560351556216}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1075259326 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5388316991785437914, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+  m_PrefabInstance: {fileID: 7613466440704733608}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1219496584 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7028226160491802124, guid: cf9882930cf1b9b4285a9d62bd1cda08, type: 3}
@@ -682,16 +687,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd24c940f7ea8914d95990b43fcdf320, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1266049656 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 231232281111088063, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
-  m_PrefabInstance: {fileID: 7613466440704733608}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1304128693 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5871553561176851171, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
-  m_PrefabInstance: {fileID: 7613466440704733608}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1452738179
 GameObject:
   m_ObjectHideFlags: 0
@@ -1699,9 +1694,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Difficulty
-
-'
+  m_text: Mistakes:0/3
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1735,7 +1728,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1782,7 +1775,7 @@ GameObject:
   - component: {fileID: 3279064017719549674}
   - component: {fileID: 3279064017719549675}
   m_Layer: 5
-  m_Name: Difficulty displayer
+  m_Name: Mistakes Counter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1915,23 +1908,15 @@ PrefabInstance:
     - target: {fileID: 7028226160491802124, guid: cf9882930cf1b9b4285a9d62bd1cda08, type: 3}
       propertyPath: ResultWindow
       value: 
-      objectReference: {fileID: 1304128693}
+      objectReference: {fileID: 1075259326}
     - target: {fileID: 7028226160491802124, guid: cf9882930cf1b9b4285a9d62bd1cda08, type: 3}
       propertyPath: ResumeButton
       value: 
       objectReference: {fileID: 858247849}
     - target: {fileID: 7028226160491802124, guid: cf9882930cf1b9b4285a9d62bd1cda08, type: 3}
-      propertyPath: DifficultyText
-      value: 
-      objectReference: {fileID: 3279064017719549675}
-    - target: {fileID: 7028226160491802124, guid: cf9882930cf1b9b4285a9d62bd1cda08, type: 3}
       propertyPath: ResultTimeText
       value: 
       objectReference: {fileID: 7613466440704733609}
-    - target: {fileID: 7028226160491802124, guid: cf9882930cf1b9b4285a9d62bd1cda08, type: 3}
-      propertyPath: LevelSelectMenu
-      value: 
-      objectReference: {fileID: 1266049656}
     - target: {fileID: 7028226160491802124, guid: cf9882930cf1b9b4285a9d62bd1cda08, type: 3}
       propertyPath: mistakesCounterText
       value: 
@@ -1990,21 +1975,65 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2070433860130543179, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070433860130543179, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070433860130543179, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1219496584}
-    - target: {fileID: 3378173970725943032, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1219496584}
+    - target: {fileID: 2070433860130543179, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070433860130543179, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: NewGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070433860130543179, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070433860130543179, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2284795810167174934, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2284795810167174934, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2284795810167174934, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 4231400669612295411, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_Name
+      value: Time
+      objectReference: {fileID: 0}
+    - target: {fileID: 5275591182689985874, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_Name
+      value: Result
+      objectReference: {fileID: 0}
     - target: {fileID: 5388316991785437914, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
       propertyPath: m_Name
-      value: Menu
+      value: Result Window
       objectReference: {fileID: 0}
-    - target: {fileID: 7566792806304713873, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1219496584}
+    - target: {fileID: 5388316991785437914, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6744428876465136537, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_Name
+      value: Try again
+      objectReference: {fileID: 0}
     - target: {fileID: 7713616524289934419, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -2089,10 +2118,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8497815172210211652, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1219496584}
+    - target: {fileID: 8795088449208619346, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
+      propertyPath: m_Name
+      value: Window
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f3595383514f834b95114fdb0f249b0, type: 3}
 --- !u!114 &7613466440704733609 stripped

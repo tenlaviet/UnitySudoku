@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -15,15 +16,13 @@ public class GameManager : MonoBehaviour
     //pause / resume
     public bool isPaused;
     public GameObject ResumeButton;
-    //mistakes
-    private int maxMistakes = 3;
-    private int mistakesCount;
-    public TextMeshProUGUI mistakesCounterText;
-    //Result window
+
+    // Menu
     public GameObject ResultWindow;
     public TextMeshProUGUI ResultTimeText;
     public TextMeshProUGUI ResultText;
-    
+    public GameObject LevelSelectMenu;
+    public TextMeshProUGUI DifficultyText;
     
     private void Awake()
     {
@@ -35,7 +34,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        mistakesCount = 0;
         Application.targetFrameRate = 75;
     }
 
@@ -59,19 +57,60 @@ public class GameManager : MonoBehaviour
     }
     
     
-    
-    public void IncrementMistakeCount()
+    private List<int> GetSudokuData(int difficulty)
     {
-        mistakesCount++;
-        mistakesCounterText.text = "Mistakes:" + mistakesCount.ToString() +"/3";
-        if (mistakesCount > maxMistakes - 1)
+        
+        string json = File.ReadAllText(Application.dataPath + "/SudokuData/Data.json") ;
+        Root sudokuDatabase = JsonUtility.FromJson<Root>(json);
+        List<List<int>> matrixList = new List<List<int>>();
+        int count = 0;
+        foreach (var puzzle in sudokuDatabase.Puzzle)
         {
-            ShowGameResult(false);
+            if (puzzle.difficulty == difficulty)
+            {
+                count++;
+                matrixList.Add(puzzle.matrix);
+            }
+        }
+        Debug.Log(count);
+        int randomLevel = Random.Range(0, matrixList.Count);
+        Debug.Log(matrixList.Count);
+        Debug.Log(randomLevel);
+        return matrixList[randomLevel];
+
+    }
+
+
+    public void NewGame(int val)
+    {
+
+
+        if (LevelSelectMenu.activeSelf)
+        {
+            LevelSelectMenu.SetActive(false);
+        }
+        SudokuBoard.Instance.FillSudokuBoard(GetSudokuData(val));
+        DifficultyText.text = Enum.GetName(typeof(Difficulty), val);
+        elapsedTime = 0f;
+        
+    }
+
+    public void ShowGameResult(bool isComplete)
+    {
+        if (!isComplete)
+        {
             return;
         }
+        int minutes = Mathf.FloorToInt(elapsedTime / 60);
+        int seconds = Mathf.FloorToInt(elapsedTime % 60);
+            ResultText.text = "You won!";
+        ResultTimeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        ResultWindow.SetActive(true);
     }
-    public void NewGame()
+
+    public void OpenLevelSelectMenu()
     {
+        Debug.Log("here");
         if (GameManager.Instance.isPaused)
         {
             return;
@@ -81,27 +120,11 @@ public class GameManager : MonoBehaviour
             ResultWindow.SetActive(false);
         }
 
-        elapsedTime = 0f;
-        mistakesCount = 0;
-        mistakesCounterText.text = "Mistakes:0/3";
-        SudokuBoard.Instance.GenerateSudoku(Random.Range(25,40));
+        if (!LevelSelectMenu.activeSelf)
+        {
+            LevelSelectMenu.SetActive(true);
+        }
         
-    }
-
-    public void ShowGameResult(bool value)
-    {
-        int minutes = Mathf.FloorToInt(elapsedTime / 60);
-        int seconds = Mathf.FloorToInt(elapsedTime % 60);
-        if (value == false)
-        {
-            ResultText.text = "You lost!";
-        }
-        else
-        {
-            ResultText.text = "You won!";
-        }
-        ResultTimeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-        ResultWindow.SetActive(true);
     }
     public void TogglePause()
     {
