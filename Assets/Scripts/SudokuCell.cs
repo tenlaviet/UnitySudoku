@@ -103,6 +103,10 @@ public class SudokuCell : MonoBehaviour
         this.data.backgroundState = 0;
         this.data.textState = 0;
         this.data.value = 0;
+        for(int i = 0; i < 9; i++)
+        {
+            this.data.noteValues[i] = 0;
+        }
         UpdateCell();
 
     }

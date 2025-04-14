@@ -162,6 +162,10 @@ public class SudokuBoard : MonoBehaviour
     }
     private void RestoreBoardToDefault()
     {
+        if (isPencilActive)
+        {
+            Pencil();
+        }
         BoardHistory = new List<CellData[]>();
         currentSelectedCell = null;
         foreach (SudokuCell cell in SudokuCellArray)
