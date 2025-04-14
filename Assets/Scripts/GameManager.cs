@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
-using System.IO;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -10,6 +7,7 @@ using Random = UnityEngine.Random;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    
     //timer
     public TextMeshProUGUI timerText;
     private float elapsedTime;
@@ -23,7 +21,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI ResultText;
     public GameObject LevelSelectMenu;
     public TextMeshProUGUI DifficultyText;
-    
+    //
+    public TextAsset SudokuDatabaseFile;
     private void Awake()
     {
         if (Instance == null)
@@ -60,8 +59,7 @@ public class GameManager : MonoBehaviour
     private List<int> GetSudokuData(int difficulty)
     {
         
-        string json = File.ReadAllText(Application.dataPath + "/SudokuData/Data.json") ;
-        Root sudokuDatabase = JsonUtility.FromJson<Root>(json);
+        Root sudokuDatabase = JsonUtility.FromJson<Root>(SudokuDatabaseFile.text);
         List<List<int>> matrixList = new List<List<int>>();
         int count = 0;
         foreach (var puzzle in sudokuDatabase.Puzzle)
@@ -72,10 +70,7 @@ public class GameManager : MonoBehaviour
                 matrixList.Add(puzzle.matrix);
             }
         }
-        Debug.Log(count);
         int randomLevel = Random.Range(0, matrixList.Count);
-        Debug.Log(matrixList.Count);
-        Debug.Log(randomLevel);
         return matrixList[randomLevel];
 
     }

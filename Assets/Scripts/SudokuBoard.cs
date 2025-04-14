@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using TMPro;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
@@ -32,12 +30,16 @@ public class SudokuBoard : MonoBehaviour
     public TextAsset textAsset;
     // Board generation
     public SudokuCell sudokuCell;//Cell prefab
-    private SudokuCell[,] SudokuCellArray;
+    [SerializeField]private SudokuCell[,] SudokuCellArray;
     public Vector2 startPosition;
     public float offset;
     //current game data
-    private SudokuCell currentSelectedCell;
-    public List<CellData[]> BoardHistory;
+    [SerializeField]private SudokuCell currentSelectedCell;
+    [SerializeField]private List<CellData[]> BoardHistory;
+    //
+    public bool isPencilActive;
+
+    public TextMeshProUGUI PencilStateText;
     //
     private void Awake()
     {
@@ -54,7 +56,6 @@ public class SudokuBoard : MonoBehaviour
         BoardHistory = new List<CellData[]>();
         CreateSudokuBoard();
         SetupSudokuGrid();
-        //FillSudokuBoard(GetSudokuData(0));
     }
     
     private void CreateSudokuBoard()// instantiate and save the sudoku cells in an array
@@ -63,12 +64,8 @@ public class SudokuBoard : MonoBehaviour
         {
             for (int j = 0; j < SudokuCellArray.GetLength(1); j++)
             {
-                string name = i + "x" + j;
                 SudokuCellArray[i,j] = Instantiate(sudokuCell);
-                SudokuCellArray[i, j].gameObject.name = name;
-                SudokuCellArray[i,j].transform.SetParent(this.transform, false);//set parent for Cell
-                SudokuCellArray[i,j].transform.localScale = new Vector3(1, 1, 1);
-                SudokuCellArray[i,j].SetPosition(i,j);
+                SudokuCellArray[i,j].Initialize(i, j, this.transform);
             }
         }
     }
@@ -90,7 +87,6 @@ public class SudokuBoard : MonoBehaviour
             }
         }
     }
-    //grab sudoku data from json file
 
     public void FillSudokuBoard(List<int> puzzle)
     {
@@ -98,9 +94,15 @@ public class SudokuBoard : MonoBehaviour
         int position = 0;
         foreach (SudokuCell cell in SudokuCellArray)
         {
-            bool isEditable = puzzle[position] == 0;
-
-            cell.SetCellValue(puzzle[position], isEditable);
+            if (puzzle[position] == 0)
+            {
+                cell.isEditable = true;
+            }
+            else
+            {
+                cell.isEditable = false;
+            }
+            cell.SetCellValue(puzzle[position]);
             position++;
         }
         UpdateBoardDataHistory();
@@ -174,7 +176,6 @@ public class SudokuBoard : MonoBehaviour
     {
         if (list == null)
         {
-            Debug.Log("list is null");
             return;
         }
         for (int k = 0; k < 9; k++)
@@ -189,7 +190,6 @@ public class SudokuBoard : MonoBehaviour
     {
         if (list == null)
         {
-            Debug.Log("list is null");
             return;
         }
         for (int k = 0; k < 9; k++)
@@ -204,7 +204,6 @@ public class SudokuBoard : MonoBehaviour
     {        
         if (list == null)
         {
-            Debug.Log("list is null");
             return;
         }
         //get start row and col of subgrid with given row col
@@ -228,7 +227,6 @@ public class SudokuBoard : MonoBehaviour
     {
         if (list == null)
         {
-            Debug.Log("list is null");
             return;
         }
         if (currentSelectedCell.GetValue() == 0)
@@ -337,37 +335,16 @@ public class SudokuBoard : MonoBehaviour
         {
             if (cell.data.value == 0)
             {
-                Debug.Log(cell.data.i + "x" + cell.data.j + ":"+ cell.data.value);
 
-                Debug.Log("value == 0");
                 return false;
             }
         
             if (!CheckIfCellValueValid(cell.data.i, cell.data.j, cell.data.value))
             {
-                Debug.Log(cell.data.i + "x" + cell.data.j + ":"+ cell.data.value + "not valid");
                 return false;
             }
         }
         return true;
-        // for (int i = 0 ; i<9 ;i++)
-        // {
-        //     for (int j = 0 ; j <9; j++)
-        //     {
-        //         if (SudokuCellArray[i,j].data.value == 0)
-        //         {
-        //             Debug.Log("value == 0");
-        //             return false;
-        //         }
-        //         if (!CheckIfCellValueValid(i,j,SudokuCellArray[i,j].data.value))
-        //         {
-        //             Debug.Log(SudokuCellArray[i,j].data.i + "x" + SudokuCellArray[i,j].data.j + ":"+ SudokuCellArray[i,j].data.value + "not valid");
-        //
-        //             return false;
-        //         }
-        //     }
-        // }
-        // return true;
     }
     //
     //player actions
@@ -396,7 +373,7 @@ public class SudokuBoard : MonoBehaviour
         {
             return;
         }
-        currentSelectedCell.SetCellValue(value, true);
+        currentSelectedCell.SetCellValue(value);
         UpdateBoardState();
         UpdateBoardDataHistory();
         GameManager.Instance.ShowGameResult(CheckWinCondition());
@@ -409,17 +386,15 @@ public class SudokuBoard : MonoBehaviour
         }
         if (BoardHistory.Count <= 1)
         {
-            Debug.Log("cant undo anymore");
             return;
         }
         int position = 0;
-        foreach (SudokuCell currentCell in SudokuCellArray)
+        foreach (SudokuCell cell in SudokuCellArray)
         {
-            currentCell.data = BoardHistory[1][position];
-            currentCell.UpdateCell();
+            cell.data.ReplaceCellData(BoardHistory[1][position]);
+            cell.UpdateCell();
             position++;
         }
-        Debug.Log("undo");
         BoardHistory.RemoveAt(0);
     }
     public void Erase()
@@ -446,6 +421,17 @@ public class SudokuBoard : MonoBehaviour
         {
             return;
         }
+
+        isPencilActive = !isPencilActive;
+        if (isPencilActive)
+        {
+            PencilStateText.text = "On";
+        }
+        else
+        {
+            PencilStateText.text = "Off";
+        }
+        
     }
     private void UpdateBoardDataHistory()
     {
@@ -453,7 +439,9 @@ public class SudokuBoard : MonoBehaviour
         CellData[] boardData = new CellData[81];
         foreach (SudokuCell cell in SudokuCellArray)
         {
-            boardData[position] = cell.data;
+            CellData newData = new CellData();
+            newData.ReplaceCellData(cell.data);
+            boardData[position] = newData;
             position++;
         }
         BoardHistory.Insert(0,boardData);
